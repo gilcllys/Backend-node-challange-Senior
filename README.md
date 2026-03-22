@@ -2,8 +2,11 @@
 
 API REST para gerenciamento de produtores rurais, propriedades, safras e culturas plantadas.
 
-# Summary da API 
-<img width="1881" height="913" alt="image" src="https://github.com/user-attachments/assets/11a928f2-fbd0-4bfa-b96e-9dc61a89076b" />
+## Summary da API
+
+Na rota raiz (`http://localhost:3000/`) é exibida uma página HTML com um resumo completo da API, incluindo todos os endpoints, regras de negócio e exemplos de uso.
+
+<img width="1881" height="913" alt="Summary da API" src="https://github.com/user-attachments/assets/11a928f2-fbd0-4bfa-b96e-9dc61a89076b" />
 
 
 ## Tecnologias
