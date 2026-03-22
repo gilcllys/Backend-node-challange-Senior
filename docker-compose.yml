@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-brain_ag}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-brain_ag_pass}
+      POSTGRES_DB: ${DB_DATABASE:-brain_agriculture}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-brain_ag}
+      DB_PASSWORD: ${DB_PASSWORD:-brain_ag_pass}
+      DB_DATABASE: ${DB_DATABASE:-brain_agriculture}
+      PORT: 3000
+    ports:
+      - "${PORT:-3000}:3000"
+
+volumes:
+  pgdata:
