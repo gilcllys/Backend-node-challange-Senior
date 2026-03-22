@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brain Agriculture API</title>
+  <style>
+    :root {
+      --green-dark: #1b5e20;
+      --green: #2e7d32;
+      --green-light: #4caf50;
+      --green-pale: #e8f5e9;
+      --yellow: #f9a825;
+      --bg: #f5f7f5;
+      --text: #263238;
+      --text-light: #546e7a;
+      --white: #ffffff;
+      --border: #c8e6c9;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      color: var(--white);
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 span { color: var(--yellow); }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header-links {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .header-links a {
+      display: inline-block;
+      padding: 0.6rem 1.4rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .header-links a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: var(--green-dark);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    /* Container */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Overview cards */
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 1.4rem;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--green-light);
+    }
+
+    .card h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-light);
+      margin-bottom: 0.3rem;
+    }
+
+    .card .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    /* Section */
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    section > h2 {
+      font-size: 1.5rem;
+      color: var(--green-dark);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section > p.desc {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    /* Endpoint table */
+    .endpoint-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .endpoint-table thead {
+      background: var(--green-pale);
+    }
+
+    .endpoint-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--green-dark);
+    }
+
+    .endpoint-table td {
+      padding: 0.7rem 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+
+    .endpoint-table tr:hover td {
+      background: var(--green-pale);
+    }
+
+    .method {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      min-width: 58px;
+      text-align: center;
+    }
+
+    .method-get    { background: #e3f2fd; color: #1565c0; }
+    .method-post   { background: #e8f5e9; color: #2e7d32; }
+    .method-patch  { background: #fff3e0; color: #e65100; }
+    .method-delete { background: #ffebee; color: #c62828; }
+
+    .route {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    /* Business rules */
+    .rules-list {
+      list-style: none;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .rules-list li {
+      background: var(--white);
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      font-size: 0.93rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .rules-list li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Tech stack */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tech-tag {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--green-dark);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.8rem; }
+      .endpoint-table { font-size: 0.85rem; }
+      .endpoint-table th, .endpoint-table td { padding: 0.5rem 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌱 Brain <span>Agriculture</span> API</h1>
+    <p>API REST para gerenciamento de produtores rurais, propriedades, safras e culturas plantadas.</p>
+    <div class="header-links">
+      <a href="/api" class="btn-primary">📄 Swagger Docs</a>
+      <a href="/api-json" class="btn-secondary">{ } OpenAPI JSON</a>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Overview -->
+    <div class="overview">
+      <div class="card">
+        <h3>Endpoints</h3>
+        <div class="value">26</div>
+      </div>
+      <div class="card">
+        <h3>Módulos</h3>
+        <div class="value">6</div>
+      </div>
+      <div class="card">
+        <h3>Entidades</h3>
+        <div class="value">5</div>
+      </div>
+      <div class="card">
+        <h3>Versão</h3>
+        <div class="value">1.0</div>
+      </div>
+    </div>
+
+    <!-- Produtores -->
+    <section>
+      <h2>👤 Produtores</h2>
+      <p class="desc">Gerenciamento de produtores rurais. Validação de CPF/CNPJ, soft delete e paginação.</p>
+      <table class="endpoint-table">
+        <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method method-post">POST</span></td><td class="route">/producers</td><td>Cadastrar novo produtor rural</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/producers</td><td>Listar todos os produtores (paginado)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/producers/:id</td><td>Buscar produtor por ID</td></tr>
+          <tr><td><span class="method method-patch">PATCH</span></td><td class="route">/producers/:id</td><td>Atualizar produtor rural</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route">/producers/:id</td><td>Remover produtor (soft delete)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Fazendas -->
+    <section>
+      <h2>🏡 Fazendas</h2>
+      <p class="desc">Gerenciamento de propriedades rurais. Validação de áreas, vínculo com produtor e soft delete.</p>
+      <table class="endpoint-table">
+        <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method method-post">POST</span></td><td class="route">/farms</td><td>Cadastrar nova fazenda</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/farms</td><td>Listar todas as fazendas (paginado)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/farms/:id</td><td>Buscar fazenda por ID</td></tr>
+          <tr><td><span class="method method-patch">PATCH</span></td><td class="route">/farms/:id</td><td>Atualizar fazenda</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route">/farms/:id</td><td>Remover fazenda (soft delete)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Safras -->
+    <section>
+      <h2>📅 Safras</h2>
+      <p class="desc">Cadastro de safras (períodos de plantio). Ex: "Safra 2023", "Safra 2024".</p>
+      <table class="endpoint-table">
+        <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method method-post">POST</span></td><td class="route">/safras</td><td>Cadastrar nova safra</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/safras</td><td>Listar todas as safras (paginado)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/safras/:id</td><td>Buscar safra por ID</td></tr>
+          <tr><td><span class="method method-patch">PATCH</span></td><td class="route">/safras/:id</td><td>Atualizar safra</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route">/safras/:id</td><td>Remover safra</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Culturas Plantadas -->
+    <section>
+      <h2>🌾 Culturas Plantadas</h2>
+      <p class="desc">Cadastro de tipos de cultura. Ex: "Soja", "Milho", "Café", "Algodão", "Cana de Açúcar".</p>
+      <table class="endpoint-table">
+        <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method method-post">POST</span></td><td class="route">/culture-planted</td><td>Cadastrar nova cultura plantada</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/culture-planted</td><td>Listar todas as culturas (paginado)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/culture-planted/:id</td><td>Buscar cultura por ID</td></tr>
+          <tr><td><span class="method method-patch">PATCH</span></td><td class="route">/culture-planted/:id</td><td>Atualizar cultura plantada</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route">/culture-planted/:id</td><td>Remover cultura plantada</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Plantios -->
+    <section>
+      <h2>🌱 Plantios</h2>
+      <p class="desc">Registro de plantios vinculando fazenda + safra + cultura. Constraint único por combinação.</p>
+      <table class="endpoint-table">
+        <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method method-post">POST</span></td><td class="route">/plantios</td><td>Registrar novo plantio (fazenda + safra + cultura)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/plantios</td><td>Listar todos os plantios (paginado)</td></tr>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/plantios/:id</td><td>Buscar plantio por ID</td></tr>
+          <tr><td><span class="method method-delete">DELETE</span></td><td class="route">/plantios/:id</td><td>Remover plantio</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Dashboard -->
+    <section>
+      <h2>📊 Dashboard</h2>
+      <p class="desc">Dados agregados para visualização: totais, distribuição por estado, cultura e uso do solo.</p>
+      <table class="endpoint-table">
+        <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="method method-get">GET</span></td><td class="route">/dashboard</td><td>Obter dados do dashboard</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:1rem; background:var(--white); border-radius:10px; padding:1.2rem; box-shadow:var(--shadow); font-size:0.9rem;">
+        <strong>Resposta inclui:</strong>
+        <code style="display:block; margin-top:0.5rem; background:#263238; color:#e0e0e0; padding:1rem; border-radius:6px; font-size:0.85rem; overflow-x:auto; white-space:pre;">{
+  "totalFarms": 5,
+  "totalHectares": 12300,
+  "byState": [{ "state": "SP", "count": 2 }],
+  "byCulture": [{ "culture": "Soja", "count": 5 }],
+  "byLandUse": { "arableArea": 8100, "vegetationArea": 4200 }
+}</code>
+      </div>
+    </section>
+
+    <!-- Regras de negócio -->
+    <section>
+      <h2>📋 Regras de Negócio</h2>
+      <ul class="rules-list">
+        <li>Validação de CPF (11 dígitos) e CNPJ (14 dígitos) com verificação de dígitos</li>
+        <li>CPF/CNPJ único por produtor — rejeita duplicatas com HTTP 409</li>
+        <li>Soma de área agricultável + vegetação não pode ultrapassar a área total da fazenda</li>
+        <li>Um produtor pode ter 0, 1 ou mais propriedades rurais</li>
+        <li>Uma propriedade pode ter 0, 1 ou mais culturas plantadas por safra</li>
+        <li>Combinação (fazenda + safra + cultura) é única — sem duplicatas de plantio</li>
+        <li>Produtores e fazendas usam soft delete (campo <code>deleted_at</code>)</li>
+        <li>Todos os endpoints de listagem suportam paginação (<code>?page=1&amp;limit=20</code>)</li>
+      </ul>
+    </section>
+
+    <!-- Tecnologias -->
+    <section>
+      <h2>🛠️ Stack Tecnológica</h2>
+      <div class="tech-grid">
+        <span class="tech-tag">NestJS</span>
+        <span class="tech-tag">TypeScript</span>
+        <span class="tech-tag">TypeORM</span>
+        <span class="tech-tag">PostgreSQL 16</span>
+        <span class="tech-tag">Docker</span>
+        <span class="tech-tag">Swagger / OpenAPI</span>
+        <span class="tech-tag">class-validator</span>
+        <span class="tech-tag">Jest</span>
+        <span class="tech-tag">Node.js 20</span>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>Brain Agriculture API v1.0 — <a href="/api">Swagger Docs</a> · <a href="/api-json">OpenAPI JSON</a></p>
+  </footer>
+
+</body>
+</html>

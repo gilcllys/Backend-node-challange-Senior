@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { join } from 'path';
 
 export default registerAs('database', () => ({
   type: 'postgres' as const,
@@ -8,5 +9,7 @@ export default registerAs('database', () => ({
   password: process.env.DB_PASSWORD || 'brain_ag_pass',
   database: process.env.DB_DATABASE || 'brain_agriculture',
   autoLoadEntities: true,
-  synchronize: process.env.NODE_ENV !== 'production',
+  synchronize: false,
+  migrations: [join(__dirname, '..', 'database', 'migrations', '*{.ts,.js}')],
+  migrationsRun: true,
 }));
