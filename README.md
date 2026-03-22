@@ -2,6 +2,10 @@
 
 API REST para gerenciamento de produtores rurais, propriedades, safras e culturas plantadas.
 
+# Summary da API 
+<img width="1881" height="913" alt="image" src="https://github.com/user-attachments/assets/11a928f2-fbd0-4bfa-b96e-9dc61a89076b" />
+
+
 ## Tecnologias
 
 - **NestJS** — Framework Node.js
