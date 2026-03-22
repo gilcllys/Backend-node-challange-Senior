@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
 import databaseConfig from './config/database.config';
 import { CulturePlantedModule } from './culture-planted/culture-planted.module';
@@ -19,8 +19,8 @@ import { SafrasModule } from './safras/safras.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        ...configService.get('database'),
+      useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
+        ...configService.get<TypeOrmModuleOptions>('database'),
       }),
     }),
     ProducersModule,

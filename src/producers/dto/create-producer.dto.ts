@@ -3,7 +3,10 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { IsValidCpfCnpj } from '../../common/validators/cpf-cnpj.validator';
 
 export class CreateProducerDto {
-  @ApiProperty({ description: 'CPF ou CNPJ do produtor', example: '368.366.557-24' })
+  @ApiProperty({
+    description: 'CPF ou CNPJ do produtor',
+    example: '368.366.557-24',
+  })
   @IsNotEmpty()
   @IsString()
   @IsValidCpfCnpj()

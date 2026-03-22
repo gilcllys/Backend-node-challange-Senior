@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Farm } from '../farms/entities/farm.entity';
 import { Plantio } from '../plantios/entities/plantio.entity';
-import { DashboardResponseDto } from './dto/dashboard-response.dto';
+import {
+  CultureCount,
+  DashboardResponseDto,
+  StateCount,
+} from './dto/dashboard-response.dto';
 
 @Injectable()
 export class DashboardService {
@@ -19,20 +23,20 @@ export class DashboardService {
   async getDashboard(): Promise<DashboardResponseDto> {
     this.logger.log('Generating dashboard data');
 
-    const [totalFarms, totals, byState, byCulture, landUse] = await Promise.all(
-      [
+    const [totalFarms, totals, byState, byCulture, landUse] =
+      (await Promise.all([
         this.farmRepository.count(),
         this.farmRepository
           .createQueryBuilder('farm')
           .select('COALESCE(SUM(farm.total_area), 0)', 'totalHectares')
-          .getRawOne(),
+          .getRawOne<{ totalHectares: string }>(),
         this.farmRepository
           .createQueryBuilder('farm')
           .select('farm.state', 'state')
           .addSelect('COUNT(*)::int', 'count')
           .groupBy('farm.state')
           .orderBy('count', 'DESC')
-          .getRawMany(),
+          .getRawMany<StateCount>(),
         this.plantioRepository
           .createQueryBuilder('plantio')
           .innerJoin('plantio.culturePlanted', 'culture')
@@ -40,14 +44,19 @@ export class DashboardService {
           .addSelect('COUNT(*)::int', 'count')
           .groupBy('culture.name')
           .orderBy('count', 'DESC')
-          .getRawMany(),
+          .getRawMany<CultureCount>(),
         this.farmRepository
           .createQueryBuilder('farm')
           .select('COALESCE(SUM(farm.arable_area), 0)', 'arableArea')
           .addSelect('COALESCE(SUM(farm.vegetation_area), 0)', 'vegetationArea')
-          .getRawOne(),
-      ],
-    );
+          .getRawOne<{ arableArea: string; vegetationArea: string }>(),
+      ])) as [
+        number,
+        { totalHectares: string },
+        StateCount[],
+        CultureCount[],
+        { arableArea: string; vegetationArea: string },
+      ];
 
     return {
       totalFarms,

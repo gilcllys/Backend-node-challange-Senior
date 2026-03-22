@@ -1,10 +1,10 @@
 import {
-    Column,
-    DeleteDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { Plantio } from '../../plantios/entities/plantio.entity';
