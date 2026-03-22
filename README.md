@@ -12,6 +12,10 @@ API REST para gerenciamento de produtores rurais, propriedades, safras e cultura
 - **Jest** — Testes unitários e e2e
 - **class-validator** — Validação de DTOs
 
+## Relação de Tabelas
+<img width="6832" height="6257" alt="image" src="https://github.com/user-attachments/assets/3b3e05fb-87e9-4351-80c3-331dd3c3d725" />
+
+
 ## Arquitetura
 
 ```
